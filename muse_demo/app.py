@@ -136,9 +136,9 @@ footer { display: none !important; }
     background-color: #F5F0FF !important;
     border-color: #7C3AED !important;
 }
-[data-testid="stFileUploadDropzone"] * { color: #64748B !important; }
+[data-testid="stFileUploadDropzone"] span { color: #64748B !important; }
+[data-testid="stFileUploadDropzone"] p { color: #64748B !important; }
 [data-testid="stFileUploadDropzone"] small { color: #94A3B8 !important; }
-[data-testid="stFileUploaderFileName"] { color: #0F172A !important; font-weight: 600 !important; }
 [data-testid="stFileUploaderFileName"] { color: #0F172A !important; font-weight: 600 !important; }
 
 /* ── Buttons ── */
