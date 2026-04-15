@@ -115,13 +115,15 @@ footer { display: none !important; }
 }
 
 /* ── Upload zone ── */
+[data-testid="stFileUploader"] section,
+[data-testid="stFileUploader"] section > div,
 [data-testid="stFileUploadDropzone"],
-[data-testid="stFileUploadDropzone"] > div {
+[data-testid="stFileUploadDropzone"] > div,
+[data-testid="stFileUploadDropzone"] > div > div {
     background: #FAFAFF !important;
     background-color: #FAFAFF !important;
     border: 2px dashed #C4B5FD !important;
     border-radius: 14px !important;
-    transition: border-color 0.25s ease !important;
 }
 [data-testid="stFileUploadDropzone"]:hover,
 [data-testid="stFileUploadDropzone"]:hover > div {
