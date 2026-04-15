@@ -115,25 +115,24 @@ footer { display: none !important; }
 }
 
 /* ── Upload zone ── */
-[data-testid="stFileUploader"] section,
-[data-testid="stFileUploader"] section > div,
-[data-testid="stFileUploadDropzone"],
-[data-testid="stFileUploadDropzone"] > div,
-[data-testid="stFileUploadDropzone"] > div > div {
+[data-testid="stFileUploadDropzone"] {
     background: #FAFAFF !important;
     background-color: #FAFAFF !important;
     border: 2px dashed #C4B5FD !important;
     border-radius: 14px !important;
+    color: #475569 !important;
 }
-[data-testid="stFileUploadDropzone"]:hover,
-[data-testid="stFileUploadDropzone"]:hover > div {
+[data-testid="stFileUploadDropzone"] > div,
+[data-testid="stFileUploadDropzone"] > div > div {
+    background: transparent !important;
+    border: none !important;
+    color: #475569 !important;
+}
+[data-testid="stFileUploadDropzone"]:hover {
     background: #F5F0FF !important;
     background-color: #F5F0FF !important;
     border-color: #7C3AED !important;
 }
-[data-testid="stFileUploadDropzone"] span { color: #475569 !important; }
-[data-testid="stFileUploadDropzone"] p { color: #475569 !important; }
-[data-testid="stFileUploadDropzone"] small { color: #94A3B8 !important; }
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button {
