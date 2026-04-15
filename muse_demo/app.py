@@ -115,37 +115,16 @@ footer { display: none !important; }
 }
 
 /* ── Upload zone ── */
-[data-testid="stFileUploader"],
-[data-testid="stFileUploader"] > div,
-[data-testid="stFileUploader"] section {
-    background: transparent !important;
-}
-[data-testid="stFileUploadDropzone"],
-[data-testid="stFileUploadDropzone"] > div {
+[data-testid="stFileUploadDropzone"] {
     background: #FAFAFF !important;
-    background-color: #FAFAFF !important;
     border: 2px dashed #C4B5FD !important;
     border-radius: 14px !important;
-    padding: 1.5rem 2rem !important;
-    transition: all 0.25s ease !important;
-    min-height: 120px !important;
+    transition: border-color 0.25s ease !important;
 }
-[data-testid="stFileUploadDropzone"]:hover,
-[data-testid="stFileUploadDropzone"]:hover > div {
+[data-testid="stFileUploadDropzone"]:hover {
     background: #F5F0FF !important;
-    background-color: #F5F0FF !important;
     border-color: #7C3AED !important;
 }
-/* Text inside dropzone — all non-button elements get dark text */
-[data-testid="stFileUploadDropzone"] span,
-[data-testid="stFileUploadDropzone"] p,
-[data-testid="stFileUploadDropzone"] div,
-[data-testid="stFileUploadDropzone"] label { color: #64748B !important; }
-[data-testid="stFileUploadDropzone"] small { color: #94A3B8 !important; }
-/* Browse files button keeps white text */
-[data-testid="stFileUploadDropzone"] button { color: white !important; }
-[data-testid="stFileUploadDropzone"] button * { color: white !important; }
-[data-testid="stFileUploaderFileName"] { color: #0F172A !important; font-weight: 600 !important; }
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button {
