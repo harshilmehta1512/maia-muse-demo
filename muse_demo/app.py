@@ -124,7 +124,6 @@ footer { display: none !important; }
 [data-testid="stFileUploadDropzone"] {
     background: #FAFAFF !important;
     background-color: #FAFAFF !important;
-    border: 2px dashed #C4B5FD !important;
     border-radius: 14px !important;
     color: #475569 !important;
 }
@@ -145,7 +144,6 @@ footer { display: none !important; }
 [data-testid="stFileUploadDropzone"]:hover {
     background: #F5F0FF !important;
     background-color: #F5F0FF !important;
-    border-color: #7C3AED !important;
 }
 
 /* ── Buttons ── */
