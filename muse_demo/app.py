@@ -136,9 +136,15 @@ footer { display: none !important; }
     background-color: #F5F0FF !important;
     border-color: #7C3AED !important;
 }
-[data-testid="stFileUploadDropzone"] span { color: #64748B !important; }
-[data-testid="stFileUploadDropzone"] p { color: #64748B !important; }
+/* Text inside dropzone — all non-button elements get dark text */
+[data-testid="stFileUploadDropzone"] span,
+[data-testid="stFileUploadDropzone"] p,
+[data-testid="stFileUploadDropzone"] div,
+[data-testid="stFileUploadDropzone"] label { color: #64748B !important; }
 [data-testid="stFileUploadDropzone"] small { color: #94A3B8 !important; }
+/* Browse files button keeps white text */
+[data-testid="stFileUploadDropzone"] button { color: white !important; }
+[data-testid="stFileUploadDropzone"] button * { color: white !important; }
 [data-testid="stFileUploaderFileName"] { color: #0F172A !important; font-weight: 600 !important; }
 
 /* ── Buttons ── */
