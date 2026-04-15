@@ -115,6 +115,12 @@ footer { display: none !important; }
 }
 
 /* ── Upload zone ── */
+[data-testid="stFileUploader"] {
+    background: transparent !important;
+}
+[data-testid="stFileUploader"] section,
+[data-testid="stFileUploader"] section > div,
+[data-testid="stFileUploader"] section > div > div,
 [data-testid="stFileUploadDropzone"] {
     background: #FAFAFF !important;
     background-color: #FAFAFF !important;
@@ -122,12 +128,20 @@ footer { display: none !important; }
     border-radius: 14px !important;
     color: #475569 !important;
 }
-[data-testid="stFileUploadDropzone"] > div,
-[data-testid="stFileUploadDropzone"] > div > div {
-    background: transparent !important;
-    border: none !important;
+[data-testid="stFileUploader"] small,
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] label,
+[data-testid="stFileUploadDropzone"] * {
     color: #475569 !important;
 }
+[data-testid="stFileUploader"] button {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 10px !important;
+}
+[data-testid="stFileUploader"] button:hover,
 [data-testid="stFileUploadDropzone"]:hover {
     background: #F5F0FF !important;
     background-color: #F5F0FF !important;
