@@ -8,6 +8,7 @@ import time
 import tempfile
 import os
 import textwrap
+import base64
 from pathlib import Path
 
 import numpy as np
@@ -224,19 +225,6 @@ footer { display: none !important; }
 /* ── Divider ── */
 .divider { height: 1px; background: #E2E8F0; margin: 1.5rem 0; }
 
-/* ── Waveform bars (decorative) ── */
-.wave-bars { display:flex; align-items:center; gap:3px; height:40px; margin:0 auto; width:fit-content; }
-.wave-bar {
-    width: 3px; border-radius: 2px;
-    background: linear-gradient(to top, #7C3AED, #06B6D4);
-    animation: wave-anim var(--dur) ease-in-out infinite alternate;
-    animation-delay: var(--delay);
-}
-@keyframes wave-anim {
-    from { transform: scaleY(0.3); opacity: 0.4; }
-    to   { transform: scaleY(1.0); opacity: 1.0; }
-}
-
 /* ── Spinner text ── */
 .analyzing-text {
     color: #7C3AED; font-size: 0.85rem; font-weight: 700;
@@ -270,6 +258,11 @@ footer { display: none !important; }
 def load_detector():
     from detector import MUSEDetector
     return MUSEDetector()
+
+
+def image_data_uri(path: Path) -> str:
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 # ── Plotly helpers ────────────────────────────────────────────────────────────
@@ -386,32 +379,10 @@ def make_fakeprint_chart(fakeprint: np.ndarray, freq_range: np.ndarray, is_ai: b
     return fig
 
 
-# ── Animated wave bars HTML ───────────────────────────────────────────────────
-def wave_bars_html(n: int = 28, color_a: str = "#7C3AED", color_b: str = "#06B6D4") -> str:
-    bars = ""
-    for i in range(n):
-        h = 10 + (abs(np.sin(i * 0.6)) * 30)
-        dur = f"{0.6 + (i % 5) * 0.15:.2f}s"
-        delay = f"{(i * 0.07) % 0.8:.2f}s"
-        bars += (
-            f'<div style="width:3px;height:{h:.0f}px;border-radius:2px;flex-shrink:0;'
-            f'background:linear-gradient(to top,{color_a},{color_b});'
-            f'animation:muse-wave {dur} ease-in-out {delay} infinite alternate;"></div>'
-        )
-    return (
-        '<style>'
-        '@keyframes muse-wave{'
-        'from{transform:scaleY(0.3);opacity:0.4;}'
-        'to{transform:scaleY(1.0);opacity:1.0;}}'
-        '</style>'
-        f'<div style="display:flex;align-items:center;gap:3px;height:40px;'
-        f'margin:0 auto;width:fit-content;">{bars}</div>'
-    )
-
-
 # ── Top nav bar ───────────────────────────────────────────────────────────────
 logo_path   = Path(__file__).parent / "assets" / "logo.png"
 client_logo = Path(__file__).parent / "assets" / "client_logo.png"
+slide_path  = Path(__file__).parent / "assets" / "slide.png"
 
 nav_left, nav_center, nav_right = st.columns([2, 3, 2])
 with nav_left:
@@ -455,7 +426,7 @@ st.markdown('<div style="height:1px;background:#E2E8F0;margin:0.5rem 0 1.5rem;">
 # ── Upload section ────────────────────────────────────────────────────────────
 st.markdown('<p class="section-label">🎵 &nbsp; Analyze Track</p>', unsafe_allow_html=True)
 
-upload_col, info_col = st.columns([3, 2], gap="large")
+upload_col, info_col = st.columns([1, 1], gap="large")
 
 with upload_col:
     st.markdown(
@@ -467,8 +438,7 @@ with upload_col:
         '</div>',
         unsafe_allow_html=True,
     )
-    st.markdown(wave_bars_html(36), unsafe_allow_html=True)
-    st.markdown('<div style="height:12px;"></div>', unsafe_allow_html=True)
+    st.markdown('<div style="height:14px;"></div>', unsafe_allow_html=True)
 
     uploaded = st.file_uploader(
         "Drop audio file here, or click to browse",
@@ -486,53 +456,25 @@ with upload_col:
     st.markdown("</div>", unsafe_allow_html=True)
 
 with info_col:
-    st.markdown("""
-<div class="card" style="height:100%;">
-<div class="card-accent-top"></div>
-<div style="font-size:1.15rem;font-weight:800;color:#0F172A;margin-bottom:1.4rem;">How It Works</div>
-<div style="display:flex;flex-direction:column;gap:0;">
+    if slide_path.exists():
+        slide_markup = (
+            f'<img src="{image_data_uri(slide_path)}" alt="MAIA MUSE slide" '
+            'style="display:block;width:100%;height:auto;border-radius:12px;">'
+        )
+    else:
+        slide_markup = (
+            '<div style="font-size:0.8rem;color:#64748B;text-align:center;">'
+            'Slide image not found.</div>'
+        )
 
-  <div style="display:flex;gap:0;align-items:stretch;">
-    <div style="display:flex;flex-direction:column;align-items:center;margin-right:16px;">
-      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#06B6D4);
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-                  font-size:0.75rem;font-weight:800;color:white;">01</div>
-      <div style="width:2px;background:#E2E8F0;flex:1;margin:6px 0;"></div>
-    </div>
-    <div style="padding-bottom:1.4rem;">
-      <div style="font-size:0.87rem;font-weight:700;color:#0F172A;margin-bottom:3px;">Spectral Fakeprint Extraction</div>
-      <div style="font-size:0.77rem;color:#64748B;line-height:1.6;">STFT converts audio to frequency domain. A convex-hull baseline is subtracted to isolate periodic artifacts.</div>
-    </div>
-  </div>
-
-  <div style="display:flex;gap:0;align-items:stretch;">
-    <div style="display:flex;flex-direction:column;align-items:center;margin-right:16px;">
-      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#06B6D4);
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-                  font-size:0.75rem;font-weight:800;color:white;">02</div>
-      <div style="width:2px;background:#E2E8F0;flex:1;margin:6px 0;"></div>
-    </div>
-    <div style="padding-bottom:1.4rem;">
-      <div style="font-size:0.87rem;font-weight:700;color:#0F172A;margin-bottom:3px;">ONNX Classifier Inference</div>
-      <div style="font-size:0.77rem;color:#64748B;line-height:1.6;">A 14 KB ONNX model — trained on 17,866 tracks — scores the residue pattern in under 2 seconds on CPU.</div>
-    </div>
-  </div>
-
-  <div style="display:flex;gap:0;align-items:flex-start;">
-    <div style="display:flex;flex-direction:column;align-items:center;margin-right:16px;">
-      <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#06B6D4);
-                  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-                  font-size:0.75rem;font-weight:800;color:white;">03</div>
-    </div>
-    <div>
-      <div style="font-size:0.87rem;font-weight:700;color:#0F172A;margin-bottom:3px;">Verdict &amp; Evidence</div>
-      <div style="font-size:0.77rem;color:#64748B;line-height:1.6;">Returns AI probability, confidence score, waveform, and the fakeprint chart as forensic evidence.</div>
-    </div>
-  </div>
-
-</div>
-</div>
-""", unsafe_allow_html=True)
+    st.markdown(
+        '<div style="background:linear-gradient(180deg,#FFFFFF 0%,#F8FAFC 100%);'
+        'border:1px solid #E2E8F0;border-radius:18px;padding:14px;'
+        'box-shadow:0 1px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);">'
+        f'{slide_markup}'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
 
 # ── Inference ─────────────────────────────────────────────────────────────────
@@ -545,8 +487,7 @@ if uploaded is not None:
         loading_placeholder = st.empty()
         loading_placeholder.markdown(
             '<div style="text-align:center;padding:2rem;">'
-            + wave_bars_html(40, "#7C3AED", "#06B6D4")
-            + '<div class="analyzing-text" style="margin-top:16px;">Analyzing audio signature…</div>'
+            + '<div class="analyzing-text">Analyzing audio signature…</div>'
             + "</div>",
             unsafe_allow_html=True,
         )
@@ -684,9 +625,6 @@ else:
     pass
 
 
-# ── Product Overview ──────────────────────────────────────────────────────────
-slide_path = Path(__file__).parent / "assets" / "slide.png"
-
 st.markdown('<div style="height:2.5rem;"></div>', unsafe_allow_html=True)
 
 st.markdown("""
@@ -718,8 +656,6 @@ st.markdown("""
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:2.5rem;">
   <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:1.5rem;
               box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);">
-    <div style="width:40px;height:40px;border-radius:10px;background:#F3EEFF;
-                display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:12px;">⚠️</div>
     <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
                 color:#7C3AED;margin-bottom:6px;">The Problem</div>
     <div style="font-size:0.95rem;font-weight:700;color:#0F172A;margin-bottom:8px;line-height:1.3;">AI that sounds too human to catch</div>
@@ -727,8 +663,6 @@ st.markdown("""
   </div>
   <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:1.5rem;
               box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);">
-    <div style="width:40px;height:40px;border-radius:10px;background:#ECFEFF;
-                display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:12px;">🔬</div>
     <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
                 color:#0891B2;margin-bottom:6px;">The Power-Up</div>
     <div style="font-size:0.95rem;font-weight:700;color:#0F172A;margin-bottom:8px;line-height:1.3;">Full-spectrum forensic detection</div>
@@ -736,8 +670,6 @@ st.markdown("""
   </div>
   <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:14px;padding:1.5rem;
               box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);">
-    <div style="width:40px;height:40px;border-radius:10px;background:#F0FDF4;
-                display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:12px;">🛡️</div>
     <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
                 color:#16A34A;margin-bottom:6px;">The Transformation</div>
     <div style="font-size:0.95rem;font-weight:700;color:#0F172A;margin-bottom:8px;line-height:1.3;">From doubt to catalog integrity</div>
@@ -745,24 +677,6 @@ st.markdown("""
   </div>
 </div>
 """, unsafe_allow_html=True)
-
-if slide_path.exists():
-    st.markdown("""
-<div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:20px;
-            padding:16px;box-shadow:0 4px 24px rgba(0,0,0,0.07),0 1px 4px rgba(0,0,0,0.04);">
-  <div style="border-radius:12px;overflow:hidden;">
-""", unsafe_allow_html=True)
-    st.image(str(slide_path), use_container_width=True)
-    st.markdown("""
-  </div>
-  <div style="display:flex;justify-content:center;margin-top:12px;">
-    <span style="font-size:0.72rem;color:#94A3B8;font-weight:500;letter-spacing:0.05em;">
-      MAIA MUSE™ &nbsp;·&nbsp; Serial A00002b &nbsp;·&nbsp; Confidential
-    </span>
-  </div>
-</div>
-""", unsafe_allow_html=True)
-
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown(
@@ -778,7 +692,6 @@ st.markdown(
             </span>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <span class="feature-pill">Model: Fakeprint + ONNX</span>
             <span class="feature-pill">Accuracy: 99.88%</span>
             <span class="feature-pill">Suno · Udio Detection</span>
         </div>
