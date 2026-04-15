@@ -115,16 +115,23 @@ footer { display: none !important; }
 }
 
 /* ── Upload zone ── */
-[data-testid="stFileUploadDropzone"] {
+[data-testid="stFileUploadDropzone"],
+[data-testid="stFileUploadDropzone"] > div {
     background: #FAFAFF !important;
+    background-color: #FAFAFF !important;
     border: 2px dashed #C4B5FD !important;
     border-radius: 14px !important;
     transition: border-color 0.25s ease !important;
 }
-[data-testid="stFileUploadDropzone"]:hover {
+[data-testid="stFileUploadDropzone"]:hover,
+[data-testid="stFileUploadDropzone"]:hover > div {
     background: #F5F0FF !important;
+    background-color: #F5F0FF !important;
     border-color: #7C3AED !important;
 }
+[data-testid="stFileUploadDropzone"] span { color: #475569 !important; }
+[data-testid="stFileUploadDropzone"] p { color: #475569 !important; }
+[data-testid="stFileUploadDropzone"] small { color: #94A3B8 !important; }
 
 /* ── Buttons ── */
 [data-testid="stButton"] > button {
@@ -374,11 +381,19 @@ def wave_bars_html(n: int = 28, color_a: str = "#7C3AED", color_b: str = "#06B6D
         dur = f"{0.6 + (i % 5) * 0.15:.2f}s"
         delay = f"{(i * 0.07) % 0.8:.2f}s"
         bars += (
-            f'<div class="wave-bar" style="height:{h:.0f}px;'
-            f'--dur:{dur};--delay:{delay};'
-            f'background:linear-gradient(to top,{color_a},{color_b})"></div>'
+            f'<div style="width:3px;height:{h:.0f}px;border-radius:2px;flex-shrink:0;'
+            f'background:linear-gradient(to top,{color_a},{color_b});'
+            f'animation:muse-wave {dur} ease-in-out {delay} infinite alternate;"></div>'
         )
-    return f'<div class="wave-bars">{bars}</div>'
+    return (
+        '<style>'
+        '@keyframes muse-wave{'
+        'from{transform:scaleY(0.3);opacity:0.4;}'
+        'to{transform:scaleY(1.0);opacity:1.0;}}'
+        '</style>'
+        f'<div style="display:flex;align-items:center;gap:3px;height:40px;'
+        f'margin:0 auto;width:fit-content;">{bars}</div>'
+    )
 
 
 # ── Top nav bar ───────────────────────────────────────────────────────────────
